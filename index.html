@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Artifact 02: Password Generator Dashboard | TCSS 490</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .font-mono-custom {
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-200 antialiased flex flex-col justify-between selection:bg-blue-500 selection:text-white">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="../index.html" class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+          <i class="fa-solid fa-arrow-left text-xs"></i>
+          <span>Back to Portfolio</span>
+        </a>
+        <span class="text-xs font-mono px-2.5 py-1 rounded-md bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50">
+          Artifact 02
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-xl mx-auto px-4 sm:px-6 py-12 flex-grow w-full">
+    <div class="text-center mb-8">
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+        Secure Password Generator
+      </h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        Configure custom parameters to generate robust, cryptographic-grade passwords.
+      </p>
+    </div>
+
+    <!-- Generator Card -->
+    <div class="bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/80 rounded-2xl p-6 shadow-xl shadow-gray-200/50 dark:shadow-none">
+      
+      <!-- Password Output Display -->
+      <div class="relative mb-6">
+        <input type="text" 
+               id="passwordOutput" 
+               readonly 
+               class="w-full bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-3.5 text-lg font-mono-custom text-gray-800 dark:text-gray-100 focus:outline-none focus:border-blue-500 transition-all select-all" 
+               placeholder="Click generate...">
+        <button id="copyBtn" 
+                title="Copy to Clipboard"
+                class="absolute right-2.5 top-1/2 -translate-y-1/2 px-3 py-2 rounded-lg bg-gray-200 dark:bg-gray-800 hover:bg-blue-600 dark:hover:bg-blue-600 text-gray-700 dark:text-gray-300 hover:text-white text-xs font-semibold transition-all">
+          <i class="fa-regular fa-copy mr-1.5"></i>Copy
+        </button>
+      </div>
+
+      <!-- Strength Meter -->
+      <div class="mb-6">
+        <div class="flex justify-between items-center text-xs mb-1.5 font-medium">
+          <span class="text-gray-500 dark:text-gray-400">Security Strength</span>
+          <span id="strengthText" class="font-mono text-gray-400">-</span>
+        </div>
+        <div class="w-full h-2 bg-gray-200 dark:bg-gray-900 rounded-full overflow-hidden">
+          <div id="strengthBar" class="h-full w-0 transition-all duration-300"></div>
+        </div>
+      </div>
+
+      <!-- Controls Form -->
+      <div class="space-y-5">
+        <!-- Length Slider -->
+        <div>
+          <div class="flex justify-between items-center text-sm font-medium mb-2">
+            <label for="lengthSlider" class="text-gray-700 dark:text-gray-300">Password Length</label>
+            <span id="lengthValue" class="font-mono text-blue-600 dark:text-blue-400 font-bold bg-blue-50 dark:bg-blue-950/50 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800/40">16</span>
+          </div>
+          <input type="range" 
+                 id="lengthSlider" 
+                 min="8" 
+                 max="64" 
+                 value="16" 
+                 class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-600">
+        </div>
+
+        <!-- Checkboxes -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-gray-200 dark:border-gray-700/60">
+          <label class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700/60 cursor-pointer hover:border-blue-500/50 transition-colors">
+            <input type="checkbox" id="uppercase" checked class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 accent-blue-600">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Uppercase (A-Z)</span>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700/60 cursor-pointer hover:border-blue-500/50 transition-colors">
+            <input type="checkbox" id="lowercase" checked class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 accent-blue-600">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Lowercase (a-z)</span>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700/60 cursor-pointer hover:border-blue-500/50 transition-colors">
+            <input type="checkbox" id="numbers" checked class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 accent-blue-600">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Numbers (0-9)</span>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700/60 cursor-pointer hover:border-blue-500/50 transition-colors">
+            <input type="checkbox" id="symbols" checked class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 accent-blue-600">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Symbols (!@#$)</span>
+          </label>
+        </div>
+
+        <!-- Generate Button -->
+        <button id="generateBtn" 
+                class="w-full mt-4 py-3 px-4 rounded-xl font-semibold text-white bg-blue-600 hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Generate Password</span>
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 py-6 text-center text-xs text-gray-500 dark:text-gray-400">
+    <p>TCSS 490 &bull; Artifact 02 Dashboard</p>
+  </footer>
+
+  <!-- Password Generator JavaScript Logic -->
+  <script>
+    const lengthSlider = document.getElementById('lengthSlider');
+    const lengthValue = document.getElementById('lengthValue');
+    const passwordOutput = document.getElementById('passwordOutput');
+    const copyBtn = document.getElementById('copyBtn');
+    const generateBtn = document.getElementById('generateBtn');
+    
+    const uppercaseCheck = document.getElementById('uppercase');
+    const lowercaseCheck = document.getElementById('lowercase');
+    const numbersCheck = document.getElementById('numbers');
+    const symbolsCheck = document.getElementById('symbols');
+    
+    const strengthBar = document.getElementById('strengthBar');
+    const strengthText = document.getElementById('strengthText');
+
+    const upperChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lowerChars = 'abcdefghijklmnopqrstuvwxyz';
+    const numberChars = '0123456789';
+    const symbolChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+    lengthSlider.addEventListener('input', (e) => {
+      lengthValue.textContent = e.target.value;
+      generatePassword();
+    });
+
+    function generatePassword() {
+      let chars = '';
+      if (uppercaseCheck.checked) chars += upperChars;
+      if (lowercaseCheck.checked) chars += lowerChars;
+      if (numbersCheck.checked) chars += numberChars;
+      if (symbolsCheck.checked) chars += symbolChars;
+
+      if (chars === '') {
+        passwordOutput.value = 'Please select at least one character type!';
+        updateStrength(0, 'Invalid');
+        return;
+      }
+
+      let password = '';
+      const length = parseInt(lengthSlider.value);
+      const array = new Uint32Array(length);
+      window.crypto.getRandomValues(array);
+
+      for (let i = 0; i < length; i++) {
+        password += chars[array[i] % chars.length];
+      }
+
+      passwordOutput.value = password;
+      calculateStrength(length, uppercaseCheck.checked, lowercaseCheck.checked, numbersCheck.checked, symbolsCheck.checked);
+    }
+
+    function calculateStrength(length, hasUpper, hasLower, hasNum, hasSym) {
+      let score = 0;
+      score += length * 1.5;
+      if (hasUpper) score += 10;
+      if (hasLower) score += 10;
+      if (hasNum) score += 15;
+      if (hasSym) score += 20;
+
+      if (score < 40) {
+        strengthBar.className = 'h-full bg-red-500 w-1/4 transition-all duration-300';
+        strengthText.textContent = 'Weak';
+        strengthText.className = 'font-mono text-red-500 font-bold';
+      } else if (score < 65) {
+        strengthBar.className = 'h-full bg-amber-500 w-2/4 transition-all duration-300';
+        strengthText.textContent = 'Moderate';
+        strengthText.className = 'font-mono text-amber-500 font-bold';
+      } else if (score < 90) {
+        strengthBar.className = 'h-full bg-blue-500 w-3/4 transition-all duration-300';
+        strengthText.textContent = 'Strong';
+        strengthText.className = 'font-mono text-blue-500 font-bold';
+      } else {
+        strengthBar.className = 'h-full bg-emerald-500 w-full transition-all duration-300';
+        strengthText.textContent = 'Secure / Excellent';
+        strengthText.className = 'font-mono text-emerald-500 font-bold';
+      }
+    }
+
+    generateBtn.addEventListener('click', generatePassword);
+    
+    [uppercaseCheck, lowercaseCheck, numbersCheck, symbolsCheck].forEach(el => {
+      el.addEventListener('change', generatePassword);
+    });
+
+    copyBtn.addEventListener('click', () => {
+      if (!passwordOutput.value || passwordOutput.value.startsWith('Please')) return;
+      navigator.clipboard.writeText(passwordOutput.value);
+      copyBtn.innerHTML = '<i class="fa-solid fa-check mr-1.5 text-emerald-400"></i>Copied!';
+      setTimeout(() => {
+        copyBtn.innerHTML = '<i class="fa-regular fa-copy mr-1.5"></i>Copy';
+      }, 2000);
+    });
+
+    // Generate initial password on load
+    generatePassword();
+  </script>
+</body>
+</html>
